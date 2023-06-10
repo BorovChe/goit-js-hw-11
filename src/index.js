@@ -1,7 +1,7 @@
 import Notiflix from 'notiflix';
 import axios from 'axios';
-// import SimpleLightbox from "simplelightbox";
-// import "simplelightbox/dist/simple-lightbox.min.css";
+// import SimpleLightbox from 'simplelightbox';
+// import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { renderCard } from './helpers-js/renderCard';
 import {
@@ -11,6 +11,7 @@ import {
   form,
   pageBtn,
 } from './helpers-js/variables';
+
 
 pageBtn.addEventListener('click', onload);
 form.addEventListener('submit', onMakeSubmit);
@@ -23,10 +24,15 @@ function onload() {
 }
 
 function onMakeSubmit(e) {
-  e.preventDefault();
-  gallery.innerHTML = '';
+      e.preventDefault();
   const inputValue = e.currentTarget.searchQuery.value;
+  if (inputValue.trim() == '') {
+    renderErr()
+  }
+  else {
+  gallery.innerHTML = '';
   requestOnBack(inputValue, (currentPage = 1));
+  }
 }
 
 async function requestOnBack(value, page = 1) {
@@ -63,8 +69,3 @@ function renderErr() {
   );
 }
 
-// var lightbox = new SimpleLightbox(".gallery a", {
-//   captionDelay: 250,
-//   captionSelector: "img",
-//   captionsData: "alt",
-// });

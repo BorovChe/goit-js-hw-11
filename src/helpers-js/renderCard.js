@@ -23,9 +23,7 @@ function renderCard(arr) {
     </p>
   </div>
 </div>
-`
-    )
-    .join('');
+`).join('');
 }
 
-export { renderCard }
+export { renderCard };
