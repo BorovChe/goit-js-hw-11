@@ -1,7 +1,7 @@
 import Notiflix from 'notiflix';
 import axios from 'axios';
-// import SimpleLightbox from 'simplelightbox';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { renderCard } from './helpers-js/renderCard';
 import {
@@ -12,6 +12,12 @@ import {
   pageBtn,
 } from './helpers-js/variables';
 
+
+gallery.addEventListener("click", openModalImg);
+
+function openModalImg(even) {
+  even.preventDefault();
+};
 
 pageBtn.addEventListener('click', onload);
 form.addEventListener('submit', onMakeSubmit);
@@ -24,14 +30,13 @@ function onload() {
 }
 
 function onMakeSubmit(e) {
-      e.preventDefault();
+  e.preventDefault();
   const inputValue = e.currentTarget.searchQuery.value;
   if (inputValue.trim() == '') {
-    renderErr()
-  }
-  else {
-  gallery.innerHTML = '';
-  requestOnBack(inputValue, (currentPage = 1));
+    Notiflix.Notify.failure('Invalid value entered!!!');
+  } else {
+    gallery.innerHTML = '';
+    requestOnBack(inputValue, (currentPage = 1));
   }
 }
 
@@ -46,6 +51,11 @@ async function requestOnBack(value, page = 1) {
       renderErr();
     } else {
       gallery.insertAdjacentHTML('beforeend', renderCard(arrCard));
+                var lightbox = new SimpleLightbox(".gallery a", {
+  captionDelay: 250,
+  captionSelector: "img",
+  captionsData: "alt",
+});
       pageBtn.removeAttribute('hidden');
       if (resp.data.totalHits === gallery.children.length) {
         renderInfo();
@@ -65,7 +75,7 @@ function renderInfo() {
 
 function renderErr() {
   Notiflix.Notify.failure(
-    '"Sorry, there are no images matching your search query. Please try again."'
+    'Sorry, there are no images matching your search query. Please try again.'
   );
 }
 

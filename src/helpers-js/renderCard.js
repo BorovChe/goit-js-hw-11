@@ -2,7 +2,9 @@ function renderCard(arr) {
   return arr
     .map(
       card => `
-      <div class="photo-card">
+            <li class="gallery__item">
+   <a class="gallery__link" href="${card.largeImageURL}">
+    <div class="photo-card">
   <img class="img_card" src="${card.webformatURL}" alt="${card.tags}" widht="300" height="200" loading="lazy"/> 
   <div class="info">
     <p class="info-item">
@@ -23,6 +25,8 @@ function renderCard(arr) {
     </p>
   </div>
 </div>
+  </a>
+</li>
 `).join('');
 }
 
