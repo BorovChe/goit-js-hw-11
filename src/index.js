@@ -13,12 +13,13 @@ import {
   BASE_URL,
   gallery,
   form,
+  target,
 } from './helpers-js/variables';
 
 form.addEventListener('submit', onMakeSubmit);
 gallery.addEventListener('click', openModalImg);
 
-const target = document.querySelector('.js-guard');
+
 
 let options = {
   root: null,
