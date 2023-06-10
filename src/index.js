@@ -4,10 +4,13 @@ import axios from 'axios';
 // import "simplelightbox/dist/simple-lightbox.min.css";
 
 import { renderCard } from './helpers-js/renderCard';
-import { API_KEY, BASE_URL, gallery, form, pageBtn } from './helpers-js/variables';
-
-
-
+import {
+  API_KEY,
+  BASE_URL,
+  gallery,
+  form,
+  pageBtn,
+} from './helpers-js/variables';
 
 pageBtn.addEventListener('click', onload);
 form.addEventListener('submit', onMakeSubmit);
@@ -35,14 +38,11 @@ async function requestOnBack(value, page = 1) {
     if (arrCard.length === 0) {
       pageBtn.hidden = true;
       renderErr();
-    }
-    else {
+    } else {
       gallery.insertAdjacentHTML('beforeend', renderCard(arrCard));
       pageBtn.removeAttribute('hidden');
       if (resp.data.totalHits === gallery.children.length) {
-        Notiflix.Notify.info(
-          "We're sorry, but you've reached the end of search results."
-        );
+        renderInfo();
         pageBtn.hidden = true;
       }
     }
@@ -51,13 +51,17 @@ async function requestOnBack(value, page = 1) {
   }
 }
 
+function renderInfo() {
+  Notiflix.Notify.info(
+    "We're sorry, but you've reached the end of search results."
+  );
+}
+
 function renderErr() {
   Notiflix.Notify.failure(
     '"Sorry, there are no images matching your search query. Please try again."'
   );
 }
-
-
 
 // var lightbox = new SimpleLightbox(".gallery a", {
 //   captionDelay: 250,
