@@ -12,12 +12,6 @@ body {
     0px 1px 1px rgba(46, 47, 66, 0.16), 0px 2px 1px rgba(46, 47, 66, 0.08);
 }
 
-.box-btn {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 20px;
-}
-
 .btn {
   padding: 8px 12px;
   color: white;

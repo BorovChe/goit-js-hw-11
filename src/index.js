@@ -6,7 +6,6 @@ import {
   renderInfo,
   renderErr,
 } from './helpers-js/notifix';
-
 import { renderCard } from './helpers-js/renderCard';
 import {
   API_KEY,
@@ -16,10 +15,13 @@ import {
   target,
 } from './helpers-js/variables';
 
+var lightbox = new SimpleLightbox('.gallery a', {
+  captionDelay: 250,
+  captionSelector: 'img',
+  captionsData: 'alt',
+});
+
 form.addEventListener('submit', onMakeSubmit);
-gallery.addEventListener('click', openModalImg);
-
-
 
 let options = {
   root: null,
@@ -28,20 +30,32 @@ let options = {
 };
 
 let observer = new IntersectionObserver(onLoad, options);
-
 let currentPage = 1;
-function onLoad(entries, a) {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const inputValue = document.getElementById('searchQuery').value;
-      currentPage += 1;
-      requestOnBack(inputValue, currentPage);
-    }
-  });
+
+function onLoadArr(entries) {
+  return entries
+    .map(entry => {
+      return entry.isIntersecting;
+    })
+    .join('');
 }
 
-function openModalImg(even) {
-  even.preventDefault();
+function onLoad(entries, observ) {
+  if (onLoadArr(entries)) {
+    console.log(onLoadArr(entries));
+    const inputValue = document.getElementById('searchQuery').value;
+    currentPage += 1;
+    requestOnBack(inputValue, currentPage).then(resp => {
+      const arrCard = resp.data.hits;
+      const totalHits = resp.data.totalHits;
+      renderCard(arrCard);
+      lightbox.refresh();
+      if (totalHits === gallery.children.length) {
+    observer.unobserve(target);
+    renderInfo();
+  }
+    });
+  } 
 }
 
 function onMakeSubmit(e) {
@@ -51,31 +65,39 @@ function onMakeSubmit(e) {
     renderInvalidValue();
   } else {
     gallery.innerHTML = '';
-    requestOnBack(inputValue, (currentPage = 1));
+    requestOnBack(inputValue, (currentPage = 1)).then(resp => {
+      const arrCard = resp.data.hits;
+      const totalHits = resp.data.totalHits;
+      if (totalHits === 0) {
+        observer.unobserve(target);
+        renderErr();
+      } else {
+        renderCard(arrCard);
+        lightbox.refresh();
+        observer.observe(target);
+      }
+    });
   }
 }
 
-async function requestOnBack(value, page = 1) {
+const requestOnBack = async (value, page = 1) => {
   try {
-    const resp = await axios.get(
-      `${BASE_URL}?key=${API_KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`
-    );
-    const arrCard = resp.data.hits;
-    if (arrCard.length === 0) {
-      renderErr();
-    } else {
-      gallery.insertAdjacentHTML('beforeend', renderCard(arrCard));
-      var lightbox = new SimpleLightbox('.gallery a', {
-        captionDelay: 250,
-        captionSelector: 'img',
-        captionsData: 'alt',
-      });
-      observer.observe(target);
-      if (resp.data.totalHits === gallery.children.length) {
-        renderInfo();
-      }
-    }
+    const resp = await axios({
+      method: 'get',
+      url: `${BASE_URL}`,
+      params: {
+        key: `${API_KEY}`,
+        responseType: 'stream',
+        q: `${value}`,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: 'true',
+        per_page: 40,
+        page: `${page}`,
+      },
+    });
+    return resp;
   } catch (e) {
     renderErr();
   }
-}
+};

@@ -1,5 +1,7 @@
+import { gallery } from "./variables";
+
 function renderCard(arr) {
-  return arr
+  const card = arr
     .map(
       card => `
             <li class="gallery__item">
@@ -28,6 +30,7 @@ function renderCard(arr) {
   </a>
 </li>
 `).join('');
+  gallery.insertAdjacentHTML('beforeend', card);
 }
 
 export { renderCard };
